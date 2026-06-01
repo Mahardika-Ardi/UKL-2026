@@ -65,18 +65,18 @@ async function bootstrap() {
     .addTag('Health', 'Health check service dan database')
     .build();
   const document = SwaggerModule.createDocument(app, swaggerConfig);
-  if (process.env.NODE_ENV != 'production') {
-    SwaggerModule.setup('docs', app, document, {
-      customSiteTitle: 'Atributo API Docs',
-      swaggerOptions: {
-        persistAuthorization: true,
-        displayRequestDuration: true,
-        docExpansion: 'none',
-        tagsSorter: 'alpha',
-        operationsSorter: 'alpha',
-      },
-    });
-  }
+  // if (process.env.NODE_ENV != 'production') {
+  SwaggerModule.setup('docs', app, document, {
+    customSiteTitle: 'Atributo API Docs',
+    swaggerOptions: {
+      persistAuthorization: true,
+      displayRequestDuration: true,
+      docExpansion: 'none',
+      tagsSorter: 'alpha',
+      operationsSorter: 'alpha',
+    },
+  });
+  // }
   const logger = app.get(LoggerService);
   app.useLogger(logger);
   const PORT = Number(process.env.PORT);
