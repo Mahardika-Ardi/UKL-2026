@@ -1,14 +1,30 @@
 {
-  "name": "ukl",
+  "name": "atributo",
   "version": "1.0.0",
-  "description": "",
-  "keywords": [],
-  "author": "",
+  "description": "Atributo is fullstack application using modern framework nest.js & next.js",
+  "author": "Atributo team",
+  "contributors": [
+    {
+      "name": "Mahardika-Ardi",
+      "email": "arfurm198@gmail.com",
+      "url": "https://github.com/Mahardika-Ardi"
+    },
+    {
+      "name": "NEXconzz",
+      "email": "nuryadi.eka213@gmail.com",
+      "url": "https://github.com/NEXconzz"
+    }
+  ],
+  "private": true,
+  "license": "MIT",
   "workspaces": [
     "backend",
     "frontend"
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "concurrently": "^9.2.1"
   }
 }
