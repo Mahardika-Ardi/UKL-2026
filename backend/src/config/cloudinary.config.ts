@@ -8,7 +8,7 @@ type CloudinaryResult = {
   url: string;
   public_id: string;
 };
-const DEFAULT_FOLDER = 'MyPortofolio/Avatar';
+const DEFAULT_FOLDER = 'Atributo/file';
 
 export const uploadToCloudinary = async (
   file: Express.Multer.File,

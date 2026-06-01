@@ -1,5 +1,6 @@
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
+import { ConfigService } from '@nestjs/config';
 import { BlacklistService } from 'src/modules/auth/blacklist/blacklist.service';
 
 import { OtpService } from '../otp/otp.service';
@@ -22,6 +23,13 @@ describe('AuthService', () => {
         { provide: OtpService, useValue: {} },
         { provide: MailService, useValue: {} },
         { provide: BlacklistService, useValue: {} },
+        {
+          provide: ConfigService,
+          useValue: {
+            getOrThrow: jest.fn(() => 'test'),
+            get: jest.fn(() => undefined),
+          },
+        },
         { provide: LoggerService, useValue: { setContext: () => ({}) } },
       ],
     }).compile();

@@ -10,7 +10,6 @@ import { Prisma } from 'generated/prisma/client';
 
 import { prismaErrors } from '../utils/prisma-error.utils';
 import { LoggerService } from 'src/infrastructure/logger/logger.service';
-// import { AppError } from '../utils/app-error.utils';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
@@ -45,13 +44,10 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       } catch (httpError: unknown) {
         if (httpError instanceof HttpException) {
           response.status(httpError.getStatus());
-          // .json(httpError.getResponse() as Record<string, unknown>);
           return;
         }
 
-        // const fallback = AppError.internal();
         response.status(HttpStatus.INTERNAL_SERVER_ERROR);
-        //   .json(fallback.getResponse() as Record<string, unknown>);
       }
 
       const err =
@@ -63,9 +59,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         { context: GlobalExceptionFilter.name },
       );
 
-      //   const fallback = AppError.internal();
       response.status(HttpStatus.INTERNAL_SERVER_ERROR);
-      // .json(fallback.getResponse() as Record<string, unknown>);
     }
   }
 }

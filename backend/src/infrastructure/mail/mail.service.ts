@@ -31,7 +31,7 @@ export class MailService {
 
   async sendotp(email: string, subject: string, code: string) {
     await this.transporter.sendMail({
-      from: `"My Portofolio" <${process.env.MAIL_USER}>`,
+      from: `"Atributo" <${process.env.MAIL_USER}>`,
       to: email,
       subject,
       html: `<!DOCTYPE html>
@@ -89,7 +89,7 @@ export class MailService {
                           <!-- Footer -->
                           <tr>
                             <td style="padding-top:30px; text-align:center; color:#aaa; font-size:12px;">
-                              <p>&copy; ${new Date().getFullYear()} Your App. All rights reserved.</p>
+                              <p>&copy; ${new Date().getFullYear()} Atributo. All rights reserved.</p>
                             </td>
                           </tr>
 

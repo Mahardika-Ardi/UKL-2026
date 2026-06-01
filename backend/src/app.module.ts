@@ -31,6 +31,13 @@ import { MailModule } from './infrastructure/mail/mail.module';
 import { PrismaModule } from './infrastructure/prisma/prisma.module';
 import { RedisModule } from './infrastructure/redis/redis.module';
 import { CacheModule } from './infrastructure/cache/cache.module';
+import { AddressModule } from './modules/address/address.module';
+import { CartModule } from './modules/cart/cart.module';
+import { InboxesModule } from './modules/inboxes/inboxes.module';
+import { OrdersModule } from './modules/orders/orders.module';
+import { ProductsModule } from './modules/products/products.module';
+import { ReviewsModule } from './modules/reviews/reviews.module';
+import { StoresModule } from './modules/stores/stores.module';
 
 @Module({
   imports: [
@@ -80,6 +87,13 @@ import { CacheModule } from './infrastructure/cache/cache.module';
     BlacklistModule,
     CacheModule,
     CloudinaryModule,
+    AddressModule,
+    StoresModule,
+    ProductsModule,
+    CartModule,
+    OrdersModule,
+    ReviewsModule,
+    InboxesModule,
   ],
   controllers: [AppController],
   providers: [

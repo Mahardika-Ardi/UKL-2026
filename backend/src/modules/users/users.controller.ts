@@ -20,7 +20,7 @@ import {
 import { multerConfig } from 'src/config/multer.config';
 import { CurrentUser } from 'src/shared/decorators/current-user.decorator';
 import { Role } from 'src/shared/decorators/role.decorator';
-import { JwtAuthGuard } from 'src/shared/guards/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
 
 import { RolesGuard } from '../auth/guards/role.guard';
 import { PaginationDto } from './dto/pagination.dto';

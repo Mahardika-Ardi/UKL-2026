@@ -34,7 +34,18 @@ async function bootstrap() {
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Atributo API')
-    .setDescription('Dokumentasi API untuk aplikasi backend atributo.')
+    .setDescription(
+      [
+        'Dokumentasi API backend Atributo untuk ecommerce.',
+        '',
+        'Semua response sukses mengikuti envelope: success, message, data, timestamp.',
+        'Response error mengikuti envelope: success=false, code, message, timestamp, details?.',
+        '',
+        'Base API: /api/v1',
+        'Health check: /health',
+        'Detail ringkas yang mudah dibaca ada di docs/swagger-guide.md.',
+      ].join('\n'),
+    )
     .setVersion('1.0.0')
     .addCookieAuth('access_token', {
       type: 'apiKey',
@@ -42,10 +53,21 @@ async function bootstrap() {
       name: 'access_token',
       description: 'JWT access token yang disimpan pada cookie httpOnly',
     })
+    .addTag('Auth', 'Login, register, OTP, dan session management')
+    .addTag('Users', 'Profil user dan manajemen akun')
+    .addTag('Address', 'Manajemen alamat pengiriman')
+    .addTag('Stores', 'Manajemen store dan verifikasi toko')
+    .addTag('Products', 'Katalog produk dan manajemen stok')
+    .addTag('Cart', 'Keranjang belanja user')
+    .addTag('Orders', 'Checkout, status order, dan pembatalan')
+    .addTag('Reviews', 'Review produk dari user')
+    .addTag('Inboxes', 'Notifikasi order dan pesan sistem')
+    .addTag('Health', 'Health check service dan database')
     .build();
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   if (process.env.NODE_ENV != 'production') {
     SwaggerModule.setup('docs', app, document, {
+      customSiteTitle: 'Atributo API Docs',
       swaggerOptions: {
         persistAuthorization: true,
         displayRequestDuration: true,
@@ -65,4 +87,4 @@ async function bootstrap() {
   app.enableShutdownHooks();
 }
 
-bootstrap(); // TODO update some of theese to production level
+void bootstrap(); // TODO update some of theese to production level

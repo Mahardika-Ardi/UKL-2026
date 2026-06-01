@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
+import { CacheService } from 'src/infrastructure/cache/cache.service';
+import { CloudinaryService } from 'src/infrastructure/cloudinary/cloudinary.service';
+import { LoggerService } from 'src/infrastructure/logger/logger.service';
+import { PrismaService } from 'src/infrastructure/prisma/prisma.service';
 import { CACHE_KEYS } from 'src/shared/constants/cache-keys.constant';
 import { AppError } from 'src/shared/utils/app-error.utils';
+import { buildPaginationMeta } from 'src/shared/utils/pagination';
 
 import { PaginationDto } from './dto/pagination.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { userAdminSelect, userMeSelect } from './user-select';
-import { PrismaService } from 'src/infrastructure/prisma/prisma.service';
-import { CacheService } from 'src/infrastructure/cache/cache.service';
-import { CloudinaryService } from 'src/infrastructure/cloudinary/cloudinary.service';
-import { LoggerService } from 'src/infrastructure/logger/logger.service';
 
 const CACHE_TTL = 60 * 5;
 
@@ -47,7 +48,8 @@ export class UsersService {
     const where = search
       ? {
           OR: [
-            { name: { contains: search, mode: 'insensitive' as const } },
+            { firstName: { contains: search, mode: 'insensitive' as const } },
+            { lastName: { contains: search, mode: 'insensitive' as const } },
             { email: { contains: search, mode: 'insensitive' as const } },
           ],
         }
@@ -70,14 +72,7 @@ export class UsersService {
 
     const result = {
       users,
-      meta: {
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
-        hasNextPage: page < Math.ceil(total / limit),
-        hasPrevPage: page > 1,
-      },
+      meta: buildPaginationMeta(total, page, limit),
     };
 
     await this.cache.set(cacheKey, result, CACHE_TTL);
