@@ -27,10 +27,10 @@ export default function StoreDetailPage() {
             {/* Store Stats — 4 equal cols, no padding so they align with table below */}
             <div className="grid grid-cols-4 border-b border-gray-300 pb-4">
               {[
-                { label: "Total Buyers", value: "9110", iconW: 28, iconH: 22, icon: "/images/total_buyers.png" },
-                { label: "Completed Orders", value: "9011", iconW: 28, iconH: 22, icon: "/images/completed_orders.png" },
-                { label: "Cancelled Orders", value: "020", iconW: 28, iconH: 22, icon: "/images/cancelled_orders.png" },
-                { label: "Store Rating", value: "4.94", iconW: 28, iconH: 22, icon: "/images/store_rating.png" },
+                { label: "Total Buyers", value: "9110", iconW: 28, iconH: 22, icon: "/img/total_buyers.png" },
+                { label: "Completed Orders", value: "9011", iconW: 28, iconH: 22, icon: "/img/completed_orders.png" },
+                { label: "Cancelled Orders", value: "020", iconW: 28, iconH: 22, icon: "/img/cancelled_orders.png" },
+                { label: "Store Rating", value: "4.94", iconW: 28, iconH: 22, icon: "/img/store_rating.png" },
               ].map((stat, i) => (
                 <div key={i} className="flex flex-col gap-1">
                   <span className="text-xs text-gray-500">{stat.label}</span>
@@ -107,7 +107,7 @@ export default function StoreDetailPage() {
             <div className="flex items-end gap-0.5">
               <Image src="/img/store_icon.png" alt="Store" width={32} height={28} className="object-cover" />
             </div>
-            <span className="text-base font-semibold text-gray-800">Today's Income</span>
+            <span className="text-base font-semibold text-gray-800">Todays Income</span>
             <span className="text-2xl font-bold text-gray-400">Rp. 5.318.008</span>
           </div>
         </div>

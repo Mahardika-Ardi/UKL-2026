@@ -39,7 +39,7 @@ export default function Navbar() {
     router.push('/login');
   };
   const handleStoreVerification = () => {
-    router.push('/user/verifikasi');
+    router.push('/user/store_profile');
   };
   const handleProfile = () => {
     router.push('/user/profile');
@@ -53,7 +53,7 @@ export default function Navbar() {
   return (
     <>
       <style>{styles}</style>
-      <header className="fixed top-0 left-0 w-full flex items-center justify-between px-8 py-4 border-b bg-white  shadow-md z-50">
+      <header className="fixed top-0 left-0 w-full flex items-center justify-between px-8 py-4 border-b backdrop-blur-2xl bg-gray-500/45 shadow-md z-50">
 
         <Link href="/user/shop" className="text-2xl font-bold flex items-center gap-2">
           <Image
@@ -104,7 +104,7 @@ export default function Navbar() {
                 <button
                   onClick={handleStoreVerification}
                   className="w-full text-left px-4 py-2 menu-item text-black">
-                  Store Verification
+                  Make a Store
                 </button>
                 <button
                   onClick={handlePassword}

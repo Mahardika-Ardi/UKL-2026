@@ -13,6 +13,11 @@
       "name": "NEXconzz",
       "email": "nuryadi.eka213@gmail.com",
       "url": "https://github.com/NEXconzz"
+    },
+    {
+      "name": "LeonsiusG",
+      "email": "leonsius_ciello_33rpl@student.smktelkom-mlg.sch.id",
+      "url": "https://github.com/LeonsiusG"
     }
   ],
   "private": true,
@@ -22,6 +27,9 @@
     "frontend"
   ],
   "scripts": {
+    "dev": "concurrently -n frontend,backend -c blue,green \"npm run dev -w frontend\" \"npm run start:dev -w backend\"",
+    "build": "npm run build --workspace=backend && npm run build --workspace=frontend",
+    "start:prod": "concurrently -n frontend,backend -c blue,green \"npm run start -w frontend\" \"npm run start:prod -w backend\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {

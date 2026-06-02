@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Verifikasi",
-  description: "Verify your account and complete the registration process",
+  title: "Profile Store",
+  description: "View and manage your store profile",
 };
 
-export default function verifikasiLayout({
+export default function profilStoreLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
