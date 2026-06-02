@@ -1,6 +1,7 @@
 "use client";
 
 import Navbar from "../../../component/navbar-owner";
+import Image from "next/image";
 
 export default function OrderPage() {
 
