@@ -6,8 +6,6 @@ import { useRouter } from "next/navigation";
 export default function EditProfilePage() {
   const router = useRouter();
   const [name, setName] = useState("Lorep_Ipsum");
-  const [email, setEmail] = useState("Lorep Ipsum@gmail.com");
-  const [number, setNumber] = useState("08XX-XXXX-XXXX");
   const [gender, setGender] = useState("Male");
   const [dob, setDob] = useState("");
   const [avatar, setAvatar] = useState<string | null>(null);
@@ -24,8 +22,6 @@ export default function EditProfilePage() {
 
   const handleReset = () => {
     setName("Lorep_Ipsum");
-    setEmail("Lorep Ipsum@gmail.com");
-    setNumber("08XX-XXXX-XXXX");
     setGender("Male");
     setDob("");
     setAvatar(null);
@@ -130,34 +126,6 @@ export default function EditProfilePage() {
             />
           </div>
 
-          {/* Email */}
-          <div>
-            <label className="block text-[15px] font-medium text-black mb-2">
-              Email address
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-[#EBEBEB] border border-[#C8C8C8] rounded-lg px-4 py-3 text-[14px] text-gray-800 placeholder-gray-400 focus:outline-none focus:border-gray-400 transition-colors"
-              style={{ maxWidth: "660px" }}
-            />
-          </div>
-
-          {/* Number */}
-          <div>
-            <label className="block text-[15px] font-medium text-black mb-2">
-              Number
-            </label>
-            <input
-              type="tel"
-              value={number}
-              onChange={(e) => setNumber(e.target.value)}
-              className="w-full bg-[#EBEBEB] border border-[#C8C8C8] rounded-lg px-4 py-3 text-[14px] text-gray-800 placeholder-gray-400 focus:outline-none focus:border-gray-400 transition-colors"
-              style={{ maxWidth: "660px" }}
-            />
-          </div>
-
           {/* Gender */}
           <div>
             <label className="block text-[15px] font-medium text-black mb-2">
@@ -206,7 +174,6 @@ export default function EditProfilePage() {
           >
             Save Changes
           </button>
-
         </div>
       </div>
     </div>
