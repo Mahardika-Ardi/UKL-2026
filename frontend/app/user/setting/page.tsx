@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 
+
 export default function SettingsPage() {
   return (
     <div className="p-6 text-black">
