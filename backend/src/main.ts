@@ -17,7 +17,7 @@ async function bootstrap() {
   app.use(helmet({ contentSecurityPolicy: true, hidePoweredBy: true }));
   app.enableCors({
     origin: process.env.FRONTEND_URL,
-    credential: true,
+    credentials: true,
   });
   app.use(cookieParser());
   app.setGlobalPrefix('api', { exclude: ['/', 'health'] });

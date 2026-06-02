@@ -49,6 +49,7 @@
     "ioredis": "^5.11.0",
     "joi": "^18.2.1",
     "keyv": "^5.6.0",
+    "luxon": "^3.7.2",
     "multer": "^2.1.1",
     "nest-winston": "^1.10.2",
     "nodemailer": "^8.0.10",
