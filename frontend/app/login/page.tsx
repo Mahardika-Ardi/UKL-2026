@@ -22,7 +22,7 @@ export default function LoginPage() {
       setLoading(true);
 
       const response = await fetch(
-        "https://ukl-2026-production.up.railway.app/api/v1/auth/login",
+        `${process.env.NEXT_PUBLIC_BASE_JAJAL_URL}auth/login`,
         {
           method: "POST",
           credentials: "include",
