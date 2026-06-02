@@ -22,17 +22,18 @@ export default function LoginPage() {
       setLoading(true);
 
       const response = await fetch(
-        'https://ukl-2026-production.up.railway.app/api/v1/auth/login',
+        "https://ukl-2026-production.up.railway.app/api/v1/auth/login",
         {
-          method: 'POST',
+          method: "POST",
+          credentials: "include",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             email,
             password,
           }),
-        }
+        },
       );
 
       const data = await response.json();
@@ -67,7 +68,7 @@ export default function LoginPage() {
 
       alert('Login berhasil');
 
-      router.push('/user/Store');
+      router.push('/user/shop');
     } catch (error) {
       console.error('Login Error:', error);
       alert('Terjadi kesalahan saat menghubungi server');
