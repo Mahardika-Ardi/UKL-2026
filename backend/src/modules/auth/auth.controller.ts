@@ -50,7 +50,8 @@ export class AuthController {
   ) {
     const data = await this.authService.login(dto, res);
     return {
-      message: data,
+      message: 'login successfully',
+      data: data,
     };
   }
 

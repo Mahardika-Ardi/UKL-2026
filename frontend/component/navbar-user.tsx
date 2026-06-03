@@ -1,9 +1,11 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import Image from 'next/image';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import Link from "next/link";
+import Image from "next/image";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { TOKO_URL } from "@/global";
+import { toast } from "react-toastify";
 
 const styles = `
   @keyframes slideDown {
@@ -29,33 +31,61 @@ const styles = `
     background-color: #f3f4f6;
     transform: translateX(4px);
   }
-`
+`;
 
 export default function Navbar() {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const router = useRouter();
 
-  const handleLogout = () => {
-    router.push('/login');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const userName = "User";
+
+  const navigateTo = (path: string) => {
+    setIsDropdownOpen(false);
+    router.push(path);
   };
-  const handleStoreVerification = () => {
-    router.push('/user/store_profile');
+
+  const handleLogout = async () => {
+    try {
+      const response = await fetch(
+        `${TOKO_URL}auth/logout`,
+        {
+          method: "POST",
+          credentials: "include",   
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Logout failed");
+      }
+
+      toast.success("Logout successful", {
+        autoClose: 2000,
+      });
+
+      setTimeout(() => {
+        router.replace("/login");
+      }, 1000);
+
+    } catch (error) {
+      console.error(error);
+
+      toast.error("Failed to logout", {
+        autoClose: 2000,
+      });
+    }
   };
-  const handleProfile = () => {
-    router.push('/user/profile');
-  };
-  const handlePassword = () => {
-    router.push('/user/password');
-  };
-  const handleSettings = () => {
-    router.push('/user/setting');
-  };
+
   return (
     <>
       <style>{styles}</style>
-      <header className="fixed top-0 left-0 w-full flex items-center justify-between px-8 py-4 border-b backdrop-blur-2xl bg-gray-500/45 shadow-md z-50">
 
-        <Link href="/user/shop" className="text-2xl font-bold flex items-center gap-2">
+      <header className="fixed top-0 left-0 w-full flex items-center justify-between px-8 py-4 border-b backdrop-blur-2xl bg-gray-600/35 shadow-md z-50">
+
+        <Link
+          href="/user/shop"
+          className="text-2xl font-bold flex items-center gap-2"
+        >
           <Image
             src="/img/Atributo.png"
             alt="Atributo Logo"
@@ -63,7 +93,10 @@ export default function Navbar() {
             height={32}
             className="w-8 h-8"
           />
-          <span className="text-black">Atributo.</span>
+
+          <span className="text-black">
+            Atributo.
+          </span>
         </Link>
 
         <div className="flex-1 mx-80">
@@ -73,58 +106,92 @@ export default function Navbar() {
               placeholder="Search"
               className="bg-transparent flex-1 outline-none text-gray-700"
             />
+
             <button className="ml-2 text-gray-500">
               🔍
             </button>
           </div>
         </div>
-
         <div className="flex items-center gap-6">
 
-          <Link href="/user/cart" className="cursor-pointer text-xl hover:scale-110 transition-transform">
+          <Link
+            href="/user/cart"
+            className="cursor-pointer text-xl hover:scale-110 transition-transform"
+          >
             🛒
           </Link>
 
           <div className="relative">
+
             <button
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="flex items-center gap-1 cursor-pointer hover:scale-110 transition-transform"
+              onClick={() =>
+                setIsDropdownOpen((prev) => !prev)
+              }
+              className="flex items-center gap-2 cursor-pointer hover:scale-105 transition-transform"
             >
               <span className="text-xl">👤</span>
-              <span className="text-xl">▼</span>
+
+              <span className="text-black font-medium">
+                {userName}
+              </span>
+
+              <span className="text-sm">
+                ▼
+              </span>
             </button>
 
             {isDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-300 rounded-lg shadow-lg z-50 dropdown-menu">
+              <div className="absolute right-0 mt-2 w-52 bg-white border border-gray-300 rounded-lg shadow-lg z-50 dropdown-menu">
+
                 <button
-                  onClick={handleProfile}
-                  className="w-full text-left px-4 py-2 menu-item rounded-t-lg text-black">
+                  onClick={() =>
+                    navigateTo("/user/profile")
+                  }
+                  className="w-full text-left px-4 py-2 menu-item rounded-t-lg text-black"
+                >
                   Profile
                 </button>
+
                 <button
-                  onClick={handleStoreVerification}
-                  className="w-full text-left px-4 py-2 menu-item text-black">
-                  Make a Store
+                  onClick={() =>
+                    navigateTo("/user/")
+                  }
+                  className="w-full text-left px-4 py-2 menu-item text-black"
+                >
+                  Store Verification
                 </button>
+
                 <button
-                  onClick={handlePassword}
-                  className="w-full text-left px-4 py-2 menu-item text-black">
+                  onClick={() =>
+                    navigateTo("/user/password")
+                  }
+                  className="w-full text-left px-4 py-2 menu-item text-black"
+                >
                   Change Password
                 </button>
+
                 <button
-                  onClick={handleSettings}
-                  className="w-full text-left px-4 py-2 menu-item text-black">
+                  onClick={() =>
+                    navigateTo("/user/setting")
+                  }
+                  className="w-full text-left px-4 py-2 menu-item text-black"
+                >
                   Settings
                 </button>
+
                 <button
                   onClick={handleLogout}
-                  className="w-full text-left px-4 py-2 menu-item border-t rounded-b-lg text-black">
+                  className="w-full text-left px-4 py-2 menu-item border-t rounded-b-lg text-black font-medium"
+                >
                   Logout
                 </button>
+
               </div>
             )}
           </div>
+
         </div>
+
       </header>
     </>
   );

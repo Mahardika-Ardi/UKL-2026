@@ -61,14 +61,8 @@ export default function ChangePasswordPage() {
         },
       );
 
-      const responsee = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_JAJAL_URL}users/me`,
-        {
-          credentials: "include",
-        },
-      );
 
-      const user = await responsee.json();
+      const user = await response.json();
 
       console.log(user);
 

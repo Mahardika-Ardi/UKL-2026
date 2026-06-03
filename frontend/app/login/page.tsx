@@ -2,67 +2,79 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { TOKO_URL } from "@/global";
+
+type ResponseLogin = {
+  success: boolean;
+  message: string;
+  data: {
+    message: string;
+  };
+  timestamp: string;
+};
 
 export default function LoginPage() {
+  const router = useRouter();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const router = useRouter();
-
-  const handleLogin = async () => {
-    if (!email || !password) {
-      alert("Email dan Password wajib diisi");
-      return;
-    }
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
     try {
       setLoading(true);
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_JAJAL_URL}auth/login`,
-        {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email,
-            password,
-          }),
+      const response = await fetch(`${TOKO_URL}auth/login`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
-
-      
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
 
       const data = await response.json();
-
-      console.log("Login Response:", data);
-
+      console.log("Response:", data);
       if (!response.ok) {
-        alert(data.message || "Login gagal");
+        const errorMessage = Array.isArray(data.message)
+          ? data.message[0]
+          : data.message || "Login failed";
+
+        toast.error(errorMessage, {
+          hideProgressBar: true,
+          containerId: "toastLogin",
+          autoClose: 2000,
+        });
+
         return;
       }
+      toast.success(
+        data.data?.message || data.message,
+        {
+          hideProgressBar: true,
+          containerId: "toastLogin",
+          autoClose: 2000,
+        }
+      );
+      setTimeout(() => {
+        router.push("/user/shop");
+      }, 1000);
 
-      const token = data.token || data.accessToken || data?.data?.token;
-
-      if (token) {
-        localStorage.setItem("token", token);
-      }
-
-      const user = data.user || data?.data?.user;
-
-      if (user) {
-        localStorage.setItem("user", JSON.stringify(user));
-      }
-
-      router.push("/user/shop");
     } catch (error) {
-      console.error("Login Error:", error);
-      alert("Terjadi kesalahan saat menghubungi server");
+      console.error("Login error:", error);
+      toast.error("Cannot connect to server", {
+        position: "top-right",
+        autoClose: 3000,
+      });
     } finally {
       setLoading(false);
     }
@@ -97,46 +109,48 @@ export default function LoginPage() {
             </p>
           </div>
 
-          <div className="mb-6">
-            <label className="block text-sm font-bold mb-2">Email</label>
+          <form onSubmit={handleSubmit} >
+            <div className="mb-6">
+              <label className="block text-sm font-bold mb-2">Email</label>
 
-            <input
-              type="email"
-              placeholder="abcd@gmail.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 border-2 border-gray-800 rounded-lg focus:outline-none focus:border-black"
-            />
-          </div>
+              <input
+                type="email"
+                placeholder="abcd@gmail.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-4 py-3 border-2 border-gray-800 rounded-lg focus:outline-none focus:border-black"
+              />
+            </div>
 
-          <div className="mb-2">
-            <label className="block text-sm font-bold mb-2">Password</label>
+            <div className="mb-2">
+              <label className="block text-sm font-bold mb-2">Password</label>
 
-            <input
-              type="password"
-              placeholder="123456789"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 border-2 border-gray-800 rounded-lg focus:outline-none focus:border-black"
-            />
-          </div>
+              <input
+                type="password"
+                placeholder="123456789"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3 border-2 border-gray-800 rounded-lg focus:outline-none focus:border-black"
+              />
+            </div>
 
-          <div className="flex justify-end mb-8">
-            <Link
-              href="#"
-              className="text-gray-700 text-sm font-semibold hover:underline hover:text-blue-600 transition"
+            <div className="flex justify-end mb-8">
+              <Link
+                href="#"
+                className="text-gray-700 text-sm font-semibold hover:underline hover:text-blue-600 transition"
+              >
+                Forget Password ?
+              </Link>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Forget Password ?
-            </Link>
-          </div>
-
-          <button
-            onClick={handleLogin}
-            disabled={loading}
-            className="w-full bg-blue-600 text-white font-bold py-3 rounded-lg mb-8 hover:bg-blue-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? "Loading..." : "Login"}
-          </button>
+              {loading ? "Loading..." : "Login"}
+            </button>
+          </form>
 
           <div className="flex items-center gap-4 mb-8">
             <div className="flex-1 border-t border-gray-300"></div>

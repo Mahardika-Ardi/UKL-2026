@@ -112,7 +112,7 @@ export class AuthService {
       email: payload.email,
     });
 
-    return 'LogIn successfully';
+    return payload;
   }
 
   async logout(token: string, res: Response) {
