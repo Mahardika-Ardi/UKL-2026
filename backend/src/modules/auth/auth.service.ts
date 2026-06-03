@@ -125,7 +125,11 @@ export class AuthService {
       await this.blacklist.blacklist(token, ttl);
     }
 
-    res.clearCookie('access_token');
+    res.clearCookie('access_token', {
+      httpOnly: true,
+      secure: this.config.getOrThrow<string>('app.nodeEnv') === 'production',
+      sameSite: 'none',
+    });
     this.logger.log('Logout successful');
 
     return 'LogOut Successfully';
