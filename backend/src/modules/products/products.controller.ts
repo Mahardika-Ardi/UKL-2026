@@ -28,6 +28,8 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { ProductQueryDto } from './dto/product-query.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductsService } from './products.service';
+import { RolesGuard } from '../auth/guards/role.guard';
+import { Role } from 'src/shared/decorators/role.decorator';
 
 @ApiTags('Products')
 @Controller('products')
@@ -46,7 +48,7 @@ export class ProductsController {
   }
 
   @Public()
-  @Get(':id')
+  @Get('/:id')
   @ApiOperation({ summary: 'Ambil detail product' })
   async findOne(@Param('id') id: string) {
     const data = await this.productsService.findOne(id);
@@ -56,7 +58,8 @@ export class ProductsController {
     };
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Role('SHOP_OWNER')
   @Post()
   @ApiCookieAuth('access_token')
   @ApiConsumes('multipart/form-data')
@@ -75,7 +78,8 @@ export class ProductsController {
     };
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Role('SHOP_OWNER')
   @Patch(':id')
   @ApiCookieAuth('access_token')
   @ApiConsumes('multipart/form-data')
@@ -95,7 +99,8 @@ export class ProductsController {
     };
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Role('SHOP_OWNER')
   @Delete(':id')
   @ApiCookieAuth('access_token')
   @ApiOperation({ summary: 'Hapus product' })

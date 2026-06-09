@@ -2,173 +2,257 @@
 
 import Image from "next/image";
 import Navbar from "../../../component/navbar-user";
-import { useState, useEffect } from "react"; // ✅ tambah useEffect
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+
+interface StoreOwner {
+  id: string;
+  firstName: string;
+  lastName: string | null;
+  avatarUrl: string | null;
+}
+
+interface Store {
+  id: string;
+  name: string;
+  description: string;
+  logoUrl: string;
+  openTime: string;
+  closeTime: string;
+  lastOnlineAt: string | null;
+  foundedAt: string;
+  rating: string;
+  ratingCount: number;
+  totalSold: number;
+  verificationStatus: string;
+  owner: StoreOwner;
+}
 
 export default function StorePage() {
-  const [quantities, setQuantities] = useState<Record<number, number>>({});
-  const [description, setDescription] = useState("");
-  const [storeName, setStoreName] = useState("Shop Name");
-  const [operatingHours, setOperatingHours] = useState("24 Hours");
+  const router = useRouter();
+  const [stores, setStores] = useState<Store[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // ✅ Fetch data store dari backend saat halaman load
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const images = [
+    '/img/telkom.jpeg',
+    '/img/telkom.jpeg',
+    '/img/telkom.jpeg',
+  ];
+
+  const prevImage = () => {
+    setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+  };
+  
+  const nextImage = () => {
+    setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+  };
+
+
   useEffect(() => {
-    const fetchStore = async () => {
+    const fetchStores = async () => {
       try {
-        const token = localStorage.getItem("token");
-
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BASE_JAJAL_URL}user/Store`,
+          `${process.env.NEXT_PUBLIC_BASE_JAJAL_URL}stores`,
           {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+            method: "GET",
+            credentials: "include",
+          },
         );
 
         const data = await response.json();
-        console.log("Store Response:", data);
+        console.log("Stores Response:", data);
 
-        if (!response.ok) {
-          console.error("Gagal fetch store:", data.message);
+        if (!response.ok || !data.success) {
+          setError(data.message || "Gagal mengambil data toko");
           return;
         }
 
-        // ✅ Sesuaikan key dengan struktur response API
-        const store = data?.data || data?.store || data;
-
-        if (store.name) setStoreName(store.name);
-        if (store.description) setDescription(store.description);
-        if (store.openTime && store.closeTime) {
-          setOperatingHours(`${store.openTime} - ${store.closeTime}`);
-        }
-
-      } catch (error) {
-        console.error("Fetch Store Error:", error);
+        setStores(data.data.stores || []);
+      } catch (err) {
+        console.error("Fetch Stores Error:", err);
+        setError("Terjadi kesalahan saat mengambil data toko");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchStore();
+    fetchStores();
   }, []);
 
-  const increaseQty = (id: number) => {
-    setQuantities((prev) => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case "VERIFIED":
+        return (
+          <span className="inline-flex items-center gap-1 text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">
+            ✔ Verified
+          </span>
+        );
+      case "PENDING":
+        return (
+          <span className="inline-flex items-center gap-1 text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full font-medium">
+            ⏳ Pending
+          </span>
+        );
+      case "REJECTED":
+        return (
+          <span className="inline-flex items-center gap-1 text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-medium">
+            ✗ Rejected
+          </span>
+        );
+      default:
+        return null;
+    }
   };
-
-  const decreaseQty = (id: number) => {
-    setQuantities((prev) => ({ ...prev, [id]: Math.max(0, (prev[id] || 0) - 1) }));
-  };
-
-  const products = Array(8).fill({
-    name: "Item_Name",
-    description: "Item Description",
-    price: "10.000",
-    sold: "10K+ Sold",
-  });
 
   return (
     <div className="min-h-screen bg-[#f5f5f5]">
       <Navbar />
 
-      <div className="pt-32 px-8 pb-10 text-black">
-        <div className="flex flex-col lg:flex-row gap-8 items-start">
-          <div className="flex items-start gap-5 flex-1">
-            <div className="w-28 h-28 mx-10 rounded-full bg-gray-500 overflow-hidden shrink-0">
+      <div className="relative w-full h-100 bg-gray-200 flex items-center justify-center overflow-hidden">
+        <div
+          className="absolute inset-0 flex transition-transform duration-700 ease-in-out"
+          style={{
+            transform: `translateX(${-currentIndex * 100}%)`,
+          }}
+        >
+          {images.map((image, index) => (
+            <div key={index} className="min-w-full h-full shrink-0 relative">
               <Image
-                src="/img/telkom.jpeg"
-                alt="Store"
-                width={120}
-                height={120}
-                className="w-full h-full object-cover"
+                src={image}
+                alt="Shop Banner"
+                fill
+                className="object-cover rounded"
               />
-            </div>
-
-            <div>
-              {/* ✅ Semua data dinamis dari backend */}
-              <h1 className="text-4xl font-bold">
-                {loading ? "Loading..." : storeName}
-              </h1>
-
-              <p className="text-gray-600">
-                {loading ? "Loading..." : description || "Tidak ada deskripsi"}
-              </p>
-
-              <p className="text-gray-600">
-                Operating Hours: {loading ? "..." : operatingHours}
-              </p>
-
-              <p className="text-gray-600 mt-1">● Last online 1 hour ago</p>
-            </div>
-          </div>
-
-          {/* Transactions & Rating tetap sama */}
-          <div className="border border-gray-400 rounded-xl p-4 min-w-100 bg-white">
-            <h2 className="font-bold text-lg mb-3">Transactions</h2>
-            <div className="space-y-3">
-              <div className="flex justify-between">
-                <span>👥 Buyers</span>
-                <div className="text-right">
-                  <p>420 People</p>
-                  <p className="text-xs text-gray-500">(Last 2 Weeks)</p>
-                </div>
-              </div>
-              <div className="flex justify-between space-y-3">
-                <span>✔ Sold</span>
-                <p>98,91% (9011)</p>
-              </div>
-              <div className="flex justify-between">
-                <span>🚚 Avg. Delivery</span>
-                <p>1 Hour</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="border border-gray-400 rounded-xl p-4 min-w-100 bg-white">
-            <h2 className="font-bold text-lg mb-3">Rating ⭐ 4.9</h2>
-            <div className="space-y-1">
-              <div className="flex justify-between"><span>⭐⭐⭐⭐⭐</span><span>8.700</span></div>
-              <div className="flex justify-between"><span>⭐⭐⭐⭐</span><span>173</span></div>
-              <div className="flex justify-between"><span>⭐⭐⭐</span><span>86</span></div>
-              <div className="flex justify-between"><span>⭐⭐</span><span>31</span></div>
-              <div className="flex justify-between"><span>⭐</span><span>21</span></div>
-            </div>
-          </div>
-        </div>
-
-        <hr className="my-8 border-gray-400" />
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-10">
-          {products.map((product, index) => (
-            <div key={index} className="bg-white rounded-xl border border-gray-400 overflow-hidden shadow-sm hover:shadow-md transition">
-              <div className="h-72 bg-gray-300 flex items-center justify-center">
-                <h1 className="text-4xl font-bold">Image</h1>
-              </div>
-              <div className="p-3">
-                <h3 className="font-bold">{product.name}</h3>
-                <p className="text-gray-500 text-sm">{product.description}</p>
-                <div className="mt-8">
-                  <p className="font-bold text-xl">{product.price}</p>
-                  <div className="flex justify-between items-center mt-1">
-                    <p className="font-bold">{product.sold}</p>
-                    <div>
-                      {(quantities[index] || 0) === 0 ? (
-                        <button onClick={() => increaseQty(index)} className="border rounded-full w-10 h-10 flex items-center justify-center text-xl font-bold">+</button>
-                      ) : (
-                        <div className="border rounded-full px-3 py-1 flex items-center gap-4">
-                          <button onClick={() => decreaseQty(index)} className="text-xl">-</button>
-                          <span>{quantities[index]}</span>
-                          <button onClick={() => increaseQty(index)} className="text-xl">+</button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
           ))}
         </div>
+        <button
+          onClick={prevImage}
+          className="absolute left-4 bg-black text-white px-3 py-2 rounded-full hover:scale-110 transition-transform z-10"
+        >
+          ◀
+        </button>
+        <button
+          onClick={nextImage}
+          className="absolute right-4 bg-black text-white px-3 py-2 rounded-full hover:scale-110 transition-transform z-10"
+        >
+          ▶
+        </button>
+      </div>
+
+
+      <div className="pt-32 px-8 pb-10 text-black">
+        <h1 className="text-2xl font-bold mb-6">Daftar Toko</h1>
+
+        {loading && (
+          <div className="flex items-center justify-center py-20">
+            <p className="text-gray-500 text-lg">Memuat data toko...</p>
+          </div>
+        )}
+
+        {error && (
+          <div className="flex items-center justify-center py-20">
+            <p className="text-red-500">{error}</p>
+          </div>
+        )}
+
+        {!loading && !error && stores.length === 0 && (
+          <div className="flex items-center justify-center py-20">
+            <p className="text-gray-500">Belum ada toko tersedia.</p>
+          </div>
+        )}
+
+        {!loading && !error && stores.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+            {stores.map((store) => (
+              <div
+                key={store.id}
+                className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition overflow-hidden"
+              >
+                {/* Logo & Info Utama */}
+                <div className="flex items-center gap-4 p-4 border-b border-gray-100">
+                  <div className="w-16 h-16 rounded-full bg-gray-200 overflow-hidden shrink-0">
+                    {store.logoUrl ? (
+                      <Image
+                        src={store.logoUrl}
+                        alt={store.name}
+                        width={64}
+                        height={64}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-gray-400 text-xl font-bold">
+                        {store.name.charAt(0)}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h2 className="font-bold text-base truncate">
+                        {store.name}
+                      </h2>
+                      {getStatusBadge(store.verificationStatus)}
+                    </div>
+                    <p className="text-gray-500 text-sm mt-0.5 line-clamp-2">
+                      {store.description || "Tidak ada deskripsi"}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Detail Info */}
+                <div className="px-4 py-3 space-y-2 text-sm text-gray-600">
+                  <div className="flex items-center justify-between">
+                    <span>🕐 Jam Buka</span>
+                    <span className="font-medium text-gray-800">
+                      {store.openTime} – {store.closeTime}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span>⭐ Rating</span>
+                    <span className="font-medium text-gray-800">
+                      {parseFloat(store.rating) > 0
+                        ? `${parseFloat(store.rating).toFixed(1)} (${store.ratingCount} ulasan)`
+                        : "Belum ada rating"}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span>🛍️ Total Terjual</span>
+                    <span className="font-medium text-gray-800">
+                      {store.totalSold > 0
+                        ? store.totalSold.toLocaleString("id-ID")
+                        : "0"}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span>👤 Pemilik</span>
+                    <span className="font-medium text-gray-800">
+                      {store.owner.firstName}
+                      {store.owner.lastName ? ` ${store.owner.lastName}` : ""}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Footer Tombol */}
+                <div className="px-4 pb-4">
+                  <button
+                    onClick={() =>
+                      router.push(`/user/store_profile/${store.id}`)
+                    }
+                    className="w-full mt-1 bg-black text-white text-sm font-medium py-2 rounded-lg hover:bg-gray-800 transition"
+                  >
+                    Kunjungi Toko
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

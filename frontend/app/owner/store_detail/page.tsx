@@ -1,13 +1,38 @@
-'use client';
+"use client";
 
 import Image from "next/image";
-import Navbar from '@/component/navbar-owner';
+import Link from "next/link";
+import Navbar from "@/component/navbar_owner";
 
 export default function StoreDetailPage() {
   const orders = [
-    { user: "Kiana", userImage: "/img/avatar_kiana.png", order: "Dasi", status: "Unpaid", statusImage: "/img/status_unpaid.png", total: "Rp 350k", statusColor: "text-red-500" },
-    { user: "Ardi", userImage: "/img/avatar_ardi.png", order: "Sabuk", status: "Unpaid", statusImage: "/img/status_unpaid.png", total: "Rp 173k", statusColor: "text-red-500" },
-    { user: "Leon", userImage: "/img/avatar_leon.png", order: "Topi", status: "Paid", statusImage: "/img/status_paid.png", total: "Rp 812k", statusColor: "text-green-600" },
+    {
+      user: "Kiana",
+      userImage: "/img/avatar_kiana.png",
+      order: "Dasi",
+      status: "Unpaid",
+      statusImage: "/img/status_unpaid.png",
+      total: "Rp 350k",
+      statusColor: "text-red-500",
+    },
+    {
+      user: "Ardi",
+      userImage: "/img/avatar_ardi.png",
+      order: "Sabuk",
+      status: "Unpaid",
+      statusImage: "/img/status_unpaid.png",
+      total: "Rp 173k",
+      statusColor: "text-red-500",
+    },
+    {
+      user: "Leon",
+      userImage: "/img/avatar_leon.png",
+      order: "Topi",
+      status: "Paid",
+      statusImage: "/img/status_paid.png",
+      total: "Rp 812k",
+      statusColor: "text-green-600",
+    },
   ];
 
   return (
@@ -27,10 +52,34 @@ export default function StoreDetailPage() {
             {/* Store Stats — 4 equal cols, no padding so they align with table below */}
             <div className="grid grid-cols-4 border-b border-gray-300 pb-4">
               {[
-                { label: "Total Buyers", value: "9110", iconW: 28, iconH: 22, icon: "/img/total_buyers.png" },
-                { label: "Completed Orders", value: "9011", iconW: 28, iconH: 22, icon: "/img/completed_orders.png" },
-                { label: "Cancelled Orders", value: "020", iconW: 28, iconH: 22, icon: "/img/cancelled_orders.png" },
-                { label: "Store Rating", value: "4.94", iconW: 28, iconH: 22, icon: "/img/store_rating.png" },
+                {
+                  label: "Total Buyers",
+                  value: "9110",
+                  iconW: 28,
+                  iconH: 22,
+                  icon: "/img/total_buyers.png",
+                },
+                {
+                  label: "Completed Orders",
+                  value: "9011",
+                  iconW: 28,
+                  iconH: 22,
+                  icon: "/img/completed_orders.png",
+                },
+                {
+                  label: "Cancelled Orders",
+                  value: "020",
+                  iconW: 28,
+                  iconH: 22,
+                  icon: "/img/cancelled_orders.png",
+                },
+                {
+                  label: "Store Rating",
+                  value: "4.94",
+                  iconW: 28,
+                  iconH: 22,
+                  icon: "/img/store_rating.png",
+                },
               ].map((stat, i) => (
                 <div key={i} className="flex flex-col gap-1">
                   <span className="text-xs text-gray-500">{stat.label}</span>
@@ -42,7 +91,9 @@ export default function StoreDetailPage() {
                       height={stat.iconH}
                       className="object-cover"
                     />
-                    <span className="text-lg font-bold text-gray-800">{stat.value}</span>
+                    <span className="text-lg font-bold text-gray-800">
+                      {stat.value}
+                    </span>
                   </div>
                 </div>
               ))}
@@ -59,10 +110,18 @@ export default function StoreDetailPage() {
                 </colgroup>
                 <thead>
                   <tr>
-                    <th className="text-sm font-semibold text-gray-700 pb-3">Recent Orders</th>
-                    <th className="text-sm font-semibold text-gray-700 pb-3">Order</th>
-                    <th className="text-sm font-semibold text-gray-700 pb-3">Status</th>
-                    <th className="text-sm font-semibold text-gray-700 pb-3">Total</th>
+                    <th className="text-sm font-semibold text-gray-700 pb-3">
+                      Recent Orders
+                    </th>
+                    <th className="text-sm font-semibold text-gray-700 pb-3">
+                      Order
+                    </th>
+                    <th className="text-sm font-semibold text-gray-700 pb-3">
+                      Status
+                    </th>
+                    <th className="text-sm font-semibold text-gray-700 pb-3">
+                      Total
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -77,10 +136,14 @@ export default function StoreDetailPage() {
                             height={22}
                             className="object-cover rounded-full"
                           />
-                          <span className="text-sm text-gray-800">{row.user}</span>
+                          <span className="text-sm text-gray-800">
+                            {row.user}
+                          </span>
                         </div>
                       </td>
-                      <td className="py-2 text-sm text-gray-800">{row.order}</td>
+                      <td className="py-2 text-sm text-gray-800">
+                        {row.order}
+                      </td>
                       <td className={`py-2 ${row.statusColor}`}>
                         <div className="flex items-center gap-2">
                           <Image
@@ -93,7 +156,9 @@ export default function StoreDetailPage() {
                           <span className="text-sm">{row.status}</span>
                         </div>
                       </td>
-                      <td className="py-2 text-sm text-gray-800">{row.total}</td>
+                      <td className="py-2 text-sm text-gray-800">
+                        {row.total}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -105,10 +170,20 @@ export default function StoreDetailPage() {
           <div className="w-56 bg-gray-100 rounded-2xl p-5 flex flex-col items-center justify-center gap-3">
             {/* Store icon */}
             <div className="flex items-end gap-0.5">
-              <Image src="/img/store_icon.png" alt="Store" width={32} height={28} className="object-cover" />
+              <Image
+                src="/img/store_icon.png"
+                alt="Store"
+                width={32}
+                height={28}
+                className="object-cover"
+              />
             </div>
-            <span className="text-base font-semibold text-gray-800">Todays Income</span>
-            <span className="text-2xl font-bold text-gray-400">Rp. 5.318.008</span>
+            <span className="text-base font-semibold text-gray-800">
+              Todays Income
+            </span>
+            <span className="text-2xl font-bold text-gray-400">
+              Rp. 5.318.008
+            </span>
           </div>
         </div>
 
@@ -116,38 +191,14 @@ export default function StoreDetailPage() {
         <div>
           <h2 className="text-lg font-bold mb-4 text-black  ">Add Product</h2>
           <div className="flex gap-4">
-            {/* Add New Card */}
-            <div className="w-44 h-52 border-2 border-dashed border-gray-300 rounded-2xl flex items-center justify-center cursor-pointer hover:bg-gray-50 transition">
-              <span className="text-4xl text-gray-400 font-light leading-none">+</span>
-            </div>
-
-            {/* Sample Product Card */}
-            <div className="w-44 bg-white border border-gray-200 rounded-2xl overflow-hidden flex flex-col">
-              {/* Product Image */}
-              <div className="bg-gray-200 h-36 flex items-center justify-center">
-                <Image
-                  src="/img/telkom.jpeg"
-                  alt="Sample Product"
-                  width={176}
-                  height={144}
-                  className="object-cover w-full h-full"
-                />
-              </div>
-              {/* Product Info */}
-              <div className="p-3 flex flex-col flex-1">
-                <span className="text-sm font-bold text-gray-800">Nama Produk</span>
-                <span className="text-xs text-gray-500 mt-0.5">Deskripsi Produk</span>
-                <div className="mt-auto pt-2 flex items-end justify-between">
-                  <div>
-                    <p className="text-sm font-bold text-gray-800">Rp 20.000</p>
-                    <p className="text-xs text-gray-400">+99 Stock</p>
-                  </div>
-                  <button className="bg-gray-800 hover:bg-black text-white text-xs font-medium px-4 py-1.5 rounded-md">
-                    Edit
-                  </button>
-                </div>
-              </div>
-            </div>
+            <button className="w-40 h-20 border-2 bg-blue-500 rounded-2xl flex items-center justify-center cursor-pointer hover:bg-blue-600 transition">
+              <Link
+                href="/owner/products"
+                className="text-xl text-white font-light leading-none"
+              >
+                Go to Add Product
+              </Link>
+            </button>
           </div>
         </div>
       </main>

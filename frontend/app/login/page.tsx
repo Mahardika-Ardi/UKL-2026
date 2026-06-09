@@ -4,18 +4,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { TOKO_URL } from "@/global";
-
-type ResponseLogin = {
-  success: boolean;
-  message: string;
-  data: {
-    message: string;
-  };
-  timestamp: string;
-};
 
 export default function LoginPage() {
   const router = useRouter();
@@ -57,18 +48,21 @@ export default function LoginPage() {
 
         return;
       }
-      toast.success(
-        data.data?.message || data.message,
-        {
-          hideProgressBar: true,
-          containerId: "toastLogin",
-          autoClose: 2000,
-        }
-      );
-      setTimeout(() => {
-        router.push("/user/shop");
-      }, 1000);
+      toast.success(data.data?.message || data.message, {
+        hideProgressBar: true,
+        containerId: "toastLogin",
+        autoClose: 2000,
+      });
 
+      if (data.data?.role === "SHOP_OWNER") {
+        setTimeout(() => {
+          router.replace("/owner/store_detail");
+        }, 1000);
+      } else {
+        setTimeout(() => {
+          router.replace("/user/Store");
+        }, 1000);
+      }
     } catch (error) {
       console.error("Login error:", error);
       toast.error("Cannot connect to server", {
@@ -109,7 +103,7 @@ export default function LoginPage() {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} >
+          <form onSubmit={handleSubmit}>
             <div className="mb-6">
               <label className="block text-sm font-bold mb-2">Email</label>
 

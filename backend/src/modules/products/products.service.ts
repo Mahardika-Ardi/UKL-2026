@@ -72,8 +72,8 @@ export class ProductsService {
     });
 
     if (!store) {
-      throw AppError.forbidden({
-        message: 'Only store owner can create product',
+      throw AppError.badRequest({
+        message: "invalid product data, can't create product",
       });
     }
 

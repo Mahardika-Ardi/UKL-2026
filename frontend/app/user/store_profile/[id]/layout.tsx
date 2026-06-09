@@ -5,10 +5,11 @@ export const metadata: Metadata = {
   description: "View and manage your store profile",
 };
 
-export default function profilStoreLayout({
+export default function ProfilStoreLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return <>{children}</>;
 }
+

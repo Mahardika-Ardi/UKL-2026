@@ -38,7 +38,7 @@ export default function Navbar() {
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const userName = "User";
+  const userName = "owner";
 
   const navigateTo = (path: string) => {
     setIsDropdownOpen(false);
@@ -80,7 +80,7 @@ export default function Navbar() {
     <>
       <style>{styles}</style>
 
-      <header className="fixed top-0 left-0 w-full flex items-center justify-between px-8 py-4 backdrop-blur-2xl bg-gray-600/35 shadow-md z-50">
+      <header className="fixed top-0 left-0 w-full flex items-center justify-between px-8 py-4 backdrop-blur-2xl shadow-md z-50">
 
         <Link
           href="/user/shop"
@@ -149,25 +149,16 @@ export default function Navbar() {
                   }
                   className="w-full text-left px-4 py-2 menu-item rounded-t-lg text-black"
                 >
-                  Profile
+                 Your Store
                 </button>
 
                 <button
                   onClick={() =>
-                    navigateTo("/user/store_profile")
+                    navigateTo("/owner/store_profile")
                   }
                   className="w-full text-left px-4 py-2 menu-item text-black"
                 >
-                 Make a Store
-                </button>
-
-                <button
-                  onClick={() =>
-                    navigateTo("/user/password")
-                  }
-                  className="w-full text-left px-4 py-2 menu-item text-black"
-                >
-                  Change Password
+                  Store Profile
                 </button>
 
                 <button

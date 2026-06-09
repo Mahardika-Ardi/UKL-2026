@@ -1,67 +1,64 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import Image from 'next/image';
-import { useState } from 'react'
-import { useRouter } from 'next/navigation';
+import Link from "next/link";
+import Image from "next/image";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { TOKO_URL } from "@/global";
 
 export default function RegisterPage() {
-  const [firstName, setFirstName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [birthDate, setBirthDate] = useState('');
-  const [gender, setGender] = useState('');
+  const [firstName, setFirstName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [birthDate, setBirthDate] = useState("");
+  const [gender, setGender] = useState("");
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
 
   const handleRegister = async () => {
     if (!firstName || !email || !password || !birthDate || !gender) {
-      alert('Semua field wajib diisi');
+      alert("Semua field wajib diisi");
       return;
     }
 
     try {
       setLoading(true);
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_JAJAL_URL}auth/register`,
-        {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            firstName,
-            email,
-            password,
-            birthDate,
-            gender,
-          }),
+      const response = await fetch(`${TOKO_URL}auth/register`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify({
+          firstName,
+          email,
+          password,
+          birthDate,
+          gender,
+        }),
+      });
 
       const data = await response.json();
-      console.log('Register Response:', data);
+      console.log("Register Response:", data);
 
       if (!response.ok) {
-        alert(data.message || 'Register gagal');
+        alert(data.message || "Register gagal");
         return;
       }
 
       const token = data.token || data.accessToken || data?.data?.token;
-      if (token) localStorage.setItem('token', token);
+      if (token) localStorage.setItem("token", token);
 
       const user = data.user || data?.data?.user;
-      if (user) localStorage.setItem('user', JSON.stringify(user));
+      if (user) localStorage.setItem("user", JSON.stringify(user));
 
-      alert('Register berhasil');
-      router.push('/login');
-
+      alert("Register berhasil");
+      router.push("/login");
     } catch (error) {
-      console.error('Register Error:', error);
-      alert('Terjadi kesalahan saat menghubungi server');
+      console.error("Register Error:", error);
+      alert("Terjadi kesalahan saat menghubungi server");
     } finally {
       setLoading(false);
     }
@@ -70,16 +67,26 @@ export default function RegisterPage() {
   return (
     <div className="flex h-screen">
       <div className="flex-1 bg-gray-300 relative">
-        <Image src="/img/telkom.jpeg" alt="telkom" fill className="object-cover" />
+        <Image
+          src="/img/telkom.jpeg"
+          alt="telkom"
+          fill
+          className="object-cover"
+        />
       </div>
 
       <div className="flex-1 bg-white px-12 py-8 flex flex-col text-black overflow-y-auto">
-
         <div className="flex justify-end gap-8 mb-12 mr-20">
-          <Link href="/login" className="font-semibold bg-gray-300 px-4 py-2 rounded-lg hover:underline">
+          <Link
+            href="/login"
+            className="font-semibold bg-gray-300 px-4 py-2 rounded-lg hover:underline"
+          >
             Login
           </Link>
-          <Link href="/register" className="font-semibold text-white bg-gray-600 px-4 py-2 rounded-lg">
+          <Link
+            href="/register"
+            className="font-semibold text-white bg-gray-600 px-4 py-2 rounded-lg"
+          >
             Register
           </Link>
         </div>
@@ -172,9 +179,15 @@ export default function RegisterPage() {
           </div>
 
           <div className="flex gap-4 justify-center">
-            <button className="flex-1 bg-gray-300 text-black font-bold py-3 rounded-lg hover:bg-gray-400 transition">Google</button>
-            <button className="flex-1 bg-gray-300 text-black font-bold py-3 rounded-lg hover:bg-gray-400 transition">Facebook</button>
-            <button className="flex-1 bg-gray-300 text-black font-bold py-3 rounded-lg hover:bg-gray-400 transition">Apple</button>
+            <button className="flex-1 bg-gray-300 text-black font-bold py-3 rounded-lg hover:bg-gray-400 transition">
+              Google
+            </button>
+            <button className="flex-1 bg-gray-300 text-black font-bold py-3 rounded-lg hover:bg-gray-400 transition">
+              Facebook
+            </button>
+            <button className="flex-1 bg-gray-300 text-black font-bold py-3 rounded-lg hover:bg-gray-400 transition">
+              Apple
+            </button>
           </div>
         </div>
       </div>

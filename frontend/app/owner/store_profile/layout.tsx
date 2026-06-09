@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Profile Store",
+  title: "Store Profile",
   description: "View and manage your store profile",
 };
 
-export default function profilStoreLayout({
+export default function StoreProfileLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;

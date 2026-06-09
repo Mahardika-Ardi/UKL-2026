@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
@@ -36,5 +37,10 @@ export class CreateProductDto {
   @ApiPropertyOptional({ example: true, default: true })
   @IsOptional()
   @IsBoolean()
+  @Transform(({ value }) => {
+    if (value === 'true' || value === true || value === 1) return true;
+    if (value === 'false' || value === false || value === 0) return false;
+    return value as boolean;
+  })
   isActive?: boolean = true;
 }

@@ -4,10 +4,14 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 interface UserProfile {
-  name: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
   gender: string;
-  dob: string;
-  avatar: string | null;
+  birthDate: string;
+  avatarUrl: string | null;
+  avatarPublicId: string | null;
 }
 
 export default function EditProfilePage() {
@@ -15,14 +19,19 @@ export default function EditProfilePage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [profile, setProfile] = useState<UserProfile>({
-    name: "",
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
     gender: "",
-    dob: "",
-    avatar: null,
+    birthDate: "",
+    avatarUrl: null,
+    avatarPublicId: null,
   });
   const [initialProfile, setInitialProfile] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -42,18 +51,23 @@ export default function EditProfilePage() {
         console.log("Fetched profile data:", result);
 
         if (result.data) {
-          const userData = {
-            name: result.data.name || "",
+          const userData: UserProfile = {
+            firstName: result.data.firstName || "",
+            lastName: result.data.lastName || "",
+            email: result.data.email || "",
+            phone: result.data.phone || "",
             gender: result.data.gender || "",
-            dob: result.data.dob || "",
-            avatar: result.data.avatar || null,
+            birthDate: result.data.birthDate
+              ? result.data.birthDate.split("T")[0] // Normalize ISO date to YYYY-MM-DD
+              : "",
+            avatarUrl: result.data.avatarUrl || null,
+            avatarPublicId: result.data.avatarPublicId || null,
           };
           setProfile(userData);
           setInitialProfile(userData);
         }
       } catch (error) {
         console.error("Failed to fetch profile:", error);
-        // You might want to show a user-friendly error message here
       } finally {
         setIsLoading(false);
       }
@@ -62,38 +76,78 @@ export default function EditProfilePage() {
     fetchProfile();
   }, []);
 
-  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // If your backend supports direct image upload, replace this with your actual upload logic.
+  // This example assumes the backend returns { avatarUrl, avatarPublicId } after upload.
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file type
     if (!file.type.startsWith("image/")) {
       alert("Please select an image file");
       return;
     }
 
-    // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       alert("Image size should be less than 5MB");
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      setProfile((prev) => ({ ...prev, avatar: reader.result as string }));
-    };
-    reader.onerror = () => {
-      console.error("Failed to read file");
-      alert("Failed to process image. Please try again.");
-    };
-    reader.readAsDataURL(file);
+    setIsUploadingAvatar(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_JAJAL_URL}users/me/avatar`,
+        {
+          method: "POST",
+          credentials: "include",
+          body: formData,
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Upload failed: ${response.status}`);
+      }
+
+      const result = await response.json();
+
+      if (result.data) {
+        setProfile((prev) => ({
+          ...prev,
+          avatarUrl: result.data.avatarUrl || prev.avatarUrl,
+          avatarPublicId: result.data.avatarPublicId || prev.avatarPublicId,
+        }));
+      }
+    } catch (error) {
+      console.error("Failed to upload avatar:", error);
+
+      // Fallback: preview locally via FileReader if upload not yet available
+      const reader = new FileReader();
+      reader.onload = () => {
+        setProfile((prev) => ({ ...prev, avatarUrl: reader.result as string }));
+      };
+      reader.readAsDataURL(file);
+    } finally {
+      setIsUploadingAvatar(false);
+    }
   };
 
   const handleReset = () => {
     if (initialProfile) {
       setProfile(initialProfile);
     } else {
-      setProfile({ name: "", gender: "", dob: "", avatar: null });
+      setProfile({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        gender: "",
+        birthDate: "",
+        avatarUrl: null,
+        avatarPublicId: null,
+      });
     }
   };
 
@@ -109,17 +163,33 @@ export default function EditProfilePage() {
     }
 
     setIsSaving(true);
-    
+
     try {
+      // Build request body sesuai UpdateUserDto + field dari RegisterDto
+      const body: Record<string, string | null | undefined> = {
+        firstName: profile.firstName || undefined,
+        lastName: profile.lastName || undefined,
+        gender: profile.gender || undefined,
+        birthDate: profile.birthDate || undefined,
+        phone: profile.phone || undefined,
+        avatarUrl: profile.avatarUrl || undefined,
+        avatarPublicId: profile.avatarPublicId || undefined,
+      };
+
+      // Hapus key yang undefined agar tidak terkirim
+      Object.keys(body).forEach(
+        (key) => body[key] === undefined && delete body[key]
+      );
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_JAJAL_URL}users/me`,
         {
-          method: "PUT",
+          method: "PATCH",
           credentials: "include",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(profile),
+          body: JSON.stringify(body),
         }
       );
 
@@ -128,10 +198,22 @@ export default function EditProfilePage() {
       }
 
       const result = await response.json();
-      
+
       if (result.data) {
-        setProfile(result.data);
-        setInitialProfile(result.data);
+        const updated: UserProfile = {
+          firstName: result.data.firstName || "",
+          lastName: result.data.lastName || "",
+          email: result.data.email || "",
+          phone: result.data.phone || "",
+          gender: result.data.gender || "",
+          birthDate: result.data.birthDate
+            ? result.data.birthDate.split("T")[0]
+            : "",
+          avatarUrl: result.data.avatarUrl || null,
+          avatarPublicId: result.data.avatarPublicId || null,
+        };
+        setProfile(updated);
+        setInitialProfile(updated);
         alert("Profile saved successfully!");
       }
     } catch (error) {
@@ -199,25 +281,28 @@ export default function EditProfilePage() {
         <div className="mb-8 relative w-fit">
           <div
             className="w-24 h-24 rounded-full bg-[#808080] overflow-hidden cursor-pointer hover:opacity-90 transition-opacity"
-            onClick={() => fileInputRef.current?.click()}
+            onClick={() => !isUploadingAvatar && fileInputRef.current?.click()}
             role="button"
             tabIndex={0}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
                 e.preventDefault();
-                fileInputRef.current?.click();
+                if (!isUploadingAvatar) fileInputRef.current?.click();
               }
             }}
           >
-            {profile.avatar ? (
+            {isUploadingAvatar ? (
+              <div className="w-full h-full bg-[#808080] flex items-center justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+              </div>
+            ) : profile.avatarUrl ? (
               <img
-                src={profile.avatar}
+                src={profile.avatarUrl}
                 alt="Profile"
                 className="w-full h-full object-cover"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
                   target.style.display = "none";
-                  target.parentElement!.classList.add("bg-[#808080]");
                 }}
               />
             ) : (
@@ -240,8 +325,9 @@ export default function EditProfilePage() {
 
           {/* Edit Icon */}
           <button
-            onClick={() => fileInputRef.current?.click()}
-            className="absolute bottom-0 right-0 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md border border-gray-200 hover:bg-gray-50 transition-colors"
+            onClick={() => !isUploadingAvatar && fileInputRef.current?.click()}
+            disabled={isUploadingAvatar}
+            className="absolute bottom-0 right-0 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md border border-gray-200 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             aria-label="Change avatar"
           >
             <svg
@@ -271,19 +357,79 @@ export default function EditProfilePage() {
 
         {/* Form Fields */}
         <div className="flex flex-col gap-5">
-          {/* Name */}
+          {/* First Name */}
           <div>
             <label
-              htmlFor="name"
+              htmlFor="firstName"
               className="block text-[15px] font-medium text-black mb-2"
             >
-              Name
+              First Name
             </label>
             <input
-              id="name"
+              id="firstName"
               type="text"
-              value={profile.name}
-              onChange={(e) => handleInputChange("name", e.target.value)}
+              value={profile.firstName}
+              onChange={(e) => handleInputChange("firstName", e.target.value)}
+              placeholder="Enter your first name"
+              className="w-full bg-[#EBEBEB] border border-[#C8C8C8] rounded-lg px-4 py-3 text-[14px] text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#276749] focus:border-transparent transition-all"
+              style={{ maxWidth: "660px" }}
+            />
+          </div>
+
+          {/* Last Name */}
+          <div>
+            <label
+              htmlFor="lastName"
+              className="block text-[15px] font-medium text-black mb-2"
+            >
+              Last Name
+            </label>
+            <input
+              id="lastName"
+              type="text"
+              value={profile.lastName}
+              onChange={(e) => handleInputChange("lastName", e.target.value)}
+              placeholder="Enter your last name"
+              className="w-full bg-[#EBEBEB] border border-[#C8C8C8] rounded-lg px-4 py-3 text-[14px] text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#276749] focus:border-transparent transition-all"
+              style={{ maxWidth: "660px" }}
+            />
+          </div>
+
+          {/* Email - Read Only */}
+          <div>
+            <label
+              htmlFor="email"
+              className="block text-[15px] font-medium text-black mb-2"
+            >
+              Email{" "}
+              <span className="text-[12px] font-normal text-gray-400">
+                (cannot be changed)
+              </span>
+            </label>
+            <input
+              id="email"
+              type="email"
+              value={profile.email}
+              readOnly
+              className="w-full bg-[#D9D9D9] border border-[#C8C8C8] rounded-lg px-4 py-3 text-[14px] text-gray-500 cursor-not-allowed"
+              style={{ maxWidth: "660px" }}
+            />
+          </div>
+
+          {/* Phone */}
+          <div>
+            <label
+              htmlFor="phone"
+              className="block text-[15px] font-medium text-black mb-2"
+            >
+              Phone Number
+            </label>
+            <input
+              id="phone"
+              type="tel"
+              value={profile.phone}
+              onChange={(e) => handleInputChange("phone", e.target.value)}
+              placeholder="e.g. +6281234567890"
               className="w-full bg-[#EBEBEB] border border-[#C8C8C8] rounded-lg px-4 py-3 text-[14px] text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#276749] focus:border-transparent transition-all"
               style={{ maxWidth: "660px" }}
             />
@@ -314,16 +460,16 @@ export default function EditProfilePage() {
           {/* Date of Birth */}
           <div>
             <label
-              htmlFor="dob"
+              htmlFor="birthDate"
               className="block text-[15px] font-medium text-black mb-2"
             >
               Date of Birth
             </label>
             <input
-              id="dob"
+              id="birthDate"
               type="date"
-              value={profile.dob}
-              onChange={(e) => handleInputChange("dob", e.target.value)}
+              value={profile.birthDate}
+              onChange={(e) => handleInputChange("birthDate", e.target.value)}
               className="w-full bg-[#EBEBEB] border border-[#C8C8C8] rounded-lg px-4 py-3 text-[14px] text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#276749] focus:border-transparent transition-all"
               style={{ maxWidth: "660px" }}
             />
