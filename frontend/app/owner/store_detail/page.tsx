@@ -196,7 +196,7 @@ export default function StoreDetailPage() {
                 href="/owner/products"
                 className="text-xl text-white font-light leading-none"
               >
-                Go to Add Product
+                Product Detail
               </Link>
             </button>
           </div>

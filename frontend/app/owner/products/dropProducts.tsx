@@ -1,6 +1,6 @@
   'use client'
 
-  import { HapusBarang } from "@/service/barang";
+  import { HapusBarang } from "@/services/products";
   import { toast } from "react-toastify";
   import { useRouter } from "next/navigation";
 
