@@ -242,7 +242,7 @@ export default function StorePage() {
                 <div className="px-4 pb-4">
                   <button
                     onClick={() =>
-                      router.push(`/user/store_profile/${store.id}`)
+                      router.push(`/user/Store/store_profile/${store.id}`)
                     }
                     className="w-full mt-1 bg-black text-white text-sm font-medium py-2 rounded-lg hover:bg-gray-800 transition"
                   >

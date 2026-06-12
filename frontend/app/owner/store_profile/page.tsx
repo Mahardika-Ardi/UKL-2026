@@ -3,17 +3,7 @@
 import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-
-// Ambil access_token dari cookie
-const getToken = (): string => {
-  if (typeof document === "undefined") return "";
-  return (
-    document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("access_token="))
-      ?.split("=")[1] ?? ""
-  );
-};
+import { TOKO_URL } from "@/global"; // sesuaikan path jika berbeda
 
 interface StoreProfile {
   name: string;
@@ -43,18 +33,16 @@ export default function StoreProfilePage() {
   useEffect(() => {
     const fetchStore = async () => {
       try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BASE_JAJAL_URL}stores/me`,
-          {
-            credentials: "include",
-            headers: {
-              Authorization: `Bearer ${getToken()}`,
-            },
-          }
-        );
+        const response = await fetch(`${TOKO_URL}stores/me`, {
+          credentials: "include",
+        });
 
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error(`HTTP ${response.status}:`, errorText);
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        localStorage.getItem("access_token")
         const result = await response.json();
         console.log("Fetched store data:", result);
 
@@ -125,7 +113,6 @@ export default function StoreProfilePage() {
     reader.readAsDataURL(file);
   };
 
-  // ── Save: PATCH /stores/me ────────────────────────────────────────────────
   const handleSave = async () => {
     if (!form.name) {
       alert("Nama toko wajib diisi");
@@ -146,20 +133,20 @@ export default function StoreProfilePage() {
       if (form.openTime !== initialForm?.openTime) body.openTime = form.openTime;
       if (form.closeTime !== initialForm?.closeTime) body.closeTime = form.closeTime;
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_JAJAL_URL}stores/me`,
-        {
-          method: "PATCH",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${getToken()}`,
-          },
-          body: JSON.stringify(body),
-        }
-      );
+      const response = await fetch(`${TOKO_URL}stores/me`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
 
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`HTTP ${response.status}:`, errorText);
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
       const result = await response.json();
       console.log("Save Store Response:", result);

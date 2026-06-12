@@ -1,12 +1,12 @@
 'use client'
 
-import Modal from '@/components/modal';
+import Modal from '@/component/modal';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-import { EditBarang } from '@/service/barang';
+import { EditProduct } from '@/services/products';
 
-export const FormEditBarang = ({ id, nama_barang, deskripsi, harga, stok }: { id: number, nama_barang: string, deskripsi: string, harga: number, stok: number }) => {
+export const FormEditProduct = ({ id, nama_barang, deskripsi, harga, stok }: { id: number, nama_barang: string, deskripsi: string, harga: number, stok: number }) => {
 
   const [isOpen, setIsOpen] = useState(false);
   const [namaBarang, setNamaBarang] = useState(nama_barang);
@@ -25,7 +25,7 @@ export const FormEditBarang = ({ id, nama_barang, deskripsi, harga, stok }: { id
     formData.append('stok', String(stokBarang));
     if (image) formData.append('image', image);
 
-    const response = await EditBarang(id, formData);
+    const response = await EditProduct(id, formData);
     console.log(response);
     if (response.status) {
       toast("Barang berhasil diupdate", {

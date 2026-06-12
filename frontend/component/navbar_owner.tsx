@@ -47,13 +47,10 @@ export default function Navbar() {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch(
-        `${TOKO_URL}auth/logout`,
-        {
-          method: "POST",
-          credentials: "include",   
-        }
-      );
+      const response = await fetch(`${TOKO_URL}auth/logout`, {
+        method: "POST",
+        credentials: "include",
+      });
 
       if (!response.ok) {
         throw new Error("Logout failed");
@@ -66,7 +63,6 @@ export default function Navbar() {
       setTimeout(() => {
         router.replace("/login");
       }, 1000);
-
     } catch (error) {
       console.error(error);
 
@@ -80,6 +76,7 @@ export default function Navbar() {
     <>
       <style>{styles}</style>
 
+      {/* ✅ Navbar fixed di atas */}
       <header className="fixed top-0 left-0 w-full flex items-center justify-between px-8 py-4 backdrop-blur-2xl shadow-md z-50">
 
         <Link
@@ -93,10 +90,7 @@ export default function Navbar() {
             height={32}
             className="w-8 h-8"
           />
-
-          <span className="text-black">
-            Atributo.
-          </span>
+          <span className="text-black">Atributo.</span>
         </Link>
 
         <div className="flex-1 mx-80">
@@ -106,14 +100,11 @@ export default function Navbar() {
               placeholder="Search"
               className="bg-transparent flex-1 outline-none text-gray-700"
             />
-
-            <button className="ml-2 text-gray-500">
-              🔍
-            </button>
+            <button className="ml-2 text-gray-500">🔍</button>
           </div>
         </div>
-        <div className="flex items-center gap-6">
 
+        <div className="flex items-center gap-6">
           <Link
             href="/user/cart"
             className="cursor-pointer text-xl hover:scale-110 transition-transform"
@@ -122,49 +113,33 @@ export default function Navbar() {
           </Link>
 
           <div className="relative">
-
             <button
-              onClick={() =>
-                setIsDropdownOpen((prev) => !prev)
-              }
+              onClick={() => setIsDropdownOpen((prev) => !prev)}
               className="flex items-center gap-2 cursor-pointer hover:scale-105 transition-transform"
             >
               <span className="text-xl">👤</span>
-
-              <span className="text-black font-medium">
-                {userName}
-              </span>
-
-              <span className="text-sm">
-                ▼
-              </span>
+              <span className="text-black font-medium">{userName}</span>
+              <span className="text-sm">▼</span>
             </button>
 
             {isDropdownOpen && (
               <div className="absolute right-0 mt-2 w-52 bg-white border border-gray-300 rounded-lg shadow-lg z-50 dropdown-menu">
-
                 <button
-                  onClick={() =>
-                    navigateTo("/user/profile")
-                  }
+                  onClick={() => navigateTo("/owner/store_detail")}
                   className="w-full text-left px-4 py-2 menu-item rounded-t-lg text-black"
                 >
-                 Your Store
+                  Your Store
                 </button>
 
                 <button
-                  onClick={() =>
-                    navigateTo("/owner/store_profile")
-                  }
+                  onClick={() => navigateTo("/owner/store_profile")}
                   className="w-full text-left px-4 py-2 menu-item text-black"
                 >
                   Store Profile
                 </button>
 
                 <button
-                  onClick={() =>
-                    navigateTo("/user/setting")
-                  }
+                  onClick={() => navigateTo("/user/setting")}
                   className="w-full text-left px-4 py-2 menu-item text-black"
                 >
                   Settings
@@ -176,14 +151,14 @@ export default function Navbar() {
                 >
                   Logout
                 </button>
-
               </div>
             )}
           </div>
-
         </div>
-
       </header>
+
+      {/* ✅ Spacer di LUAR header — mendorong konten halaman ke bawah agar tidak tertimpa navbar */}
+      <div className="h-18" />
     </>
   );
 }

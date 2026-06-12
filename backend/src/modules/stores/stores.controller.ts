@@ -12,14 +12,17 @@ import {
 } from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import {
+  ApiBadRequestResponse,
   ApiBody,
   ApiConsumes,
   ApiCookieAuth,
+  ApiCreatedResponse,
   ApiOperation,
   ApiParam,
   ApiQuery,
   ApiResponse,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { VerificationStatus } from 'generated/prisma/enums';
 import { multerConfig } from 'src/config/multer.config';
@@ -109,8 +112,36 @@ export class StoresController {
       multerConfig,
     ),
   )
-  @ApiBody({ type: CreateStoreDto })
-  @ApiOperation({ summary: 'Buat store baru untuk user aktif' })
+  @UseGuards(JwtAuthGuard)
+  @Post()
+  @ApiCookieAuth('access_token')
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(
+    FileFieldsInterceptor(
+      [
+        { name: 'logo', maxCount: 1 },
+        { name: 'verificationDoc', maxCount: 1 },
+      ],
+      multerConfig,
+    ),
+  )
+  @ApiOperation({
+    summary: 'Buat store baru untuk user aktif',
+    description:
+      'Endpoint untuk membuat store baru beserta upload logo dan dokumen verifikasi.',
+  })
+  @ApiBody({
+    type: CreateStoreDto,
+  })
+  @ApiCreatedResponse({
+    description: 'Store berhasil dibuat',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'User belum login',
+  })
+  @ApiBadRequestResponse({
+    description: 'Data yang dikirim tidak valid',
+  })
   async create(
     @CurrentUser('id') userId: string,
     @Body() dto: CreateStoreDto,
