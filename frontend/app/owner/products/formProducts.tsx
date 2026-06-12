@@ -112,20 +112,16 @@ export const FormProducts = () => {
             <label>Gambar</label>
             <input
               type="file"
-              accept="image/*"
-              onChange={(e) =>
-                setImage(e.target.files ? e.target.files[0] : null)
-              }
-              className="border border-gray-300 rounded py-2 px-4 w-full"
-              required
+              onChange={(e) => setImage(e.target.files ? e.target.files[0] : null)}
+              className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"
             />
           </div>
 
           <button
             type="submit"
-            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+            className="w-full mt-4 px-5 py-3 bg-green-500 text-white rounded-md shadow hover:bg-blue-600 transition duration-200"
           >
-            Simpan
+            Tambah
           </button>
         </form>
       </Modal>

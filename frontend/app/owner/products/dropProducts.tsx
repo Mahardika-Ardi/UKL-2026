@@ -1,13 +1,13 @@
   'use client'
 
-  import { HapusBarang } from "@/services/products";
+  import { HapusProduct } from "@/services/products";
   import { toast } from "react-toastify";
   import { useRouter } from "next/navigation";
 
-  export const HapusBarangButton = ({ billId }: { billId: number }) => {
+  export const HapusProductButton = ({ billId }: { billId: number }) => {
     const router = useRouter();
     const handleDelete = async () => { 
-      const response = await HapusBarang(billId);
+      const response = await HapusProduct(billId);
       if (response.status) {
         toast("Barang berhasil dihapus", {
           hideProgressBar: true, containerId: 'UploudImage',

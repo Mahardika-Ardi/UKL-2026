@@ -3,7 +3,7 @@ import { GetProduct } from "@/services/products";
 import { Product } from "@/types/products";
 import Navbar from "@/component/navbar_owner";
 import { FormProducts } from "./formProducts";
-import { EditProduct } from "./editProducts"
+import { FormEditProduct } from "@/app/owner/products/editProducts";
 
 const ProductPage = async () => {
   const data: Product[] | null = await GetProduct();
@@ -58,6 +58,9 @@ const ProductPage = async () => {
                       barang.stock ||
                       0}
                   </p>
+
+                      <FormEditProduct/>
+
                 </div>
               ))}
             </div>

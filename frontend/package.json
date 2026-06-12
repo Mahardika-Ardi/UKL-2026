@@ -21,6 +21,7 @@
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "react-intersection-observer": "^10.0.3",
+    "react-toastify": "^11.1.0",
     "remixicon": "^4.9.1"
   },
   "devDependencies": {
